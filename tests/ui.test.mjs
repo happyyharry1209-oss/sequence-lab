@@ -28,6 +28,7 @@ test("main learning interactions operate on the actual HTML and app module", asy
     localStorage: window.localStorage,
   });
   const originalFetch = globalThis.fetch;
+  window.localStorage.setItem("sequence-offline", "true");
   globalThis.fetch = async () => {
     throw new Error("Network disabled in DOM simulation");
   };
@@ -144,4 +145,65 @@ test("main learning interactions operate on the actual HTML and app module", asy
   );
   globalThis.fetch = originalFetch;
   await window.happyDOM.abort();
+});
+
+test("fresh GitHub Pages visitors connect to the deployed API and safely display replies", async () => {
+  const window = new Window({
+    url: "https://happyyharry1209-oss.github.io/sequence-lab/",
+    settings: {
+      enableJavaScriptEvaluation: false,
+      disableJavaScriptFileLoading: true,
+      enableCSSFileLoading: false,
+      enableImageFileLoading: false,
+    },
+  });
+  window.document.write(
+    await readFile(new URL("../docs/index.html", import.meta.url), "utf8"),
+  );
+  Object.assign(globalThis, {
+    window,
+    document: window.document,
+    location: window.location,
+    localStorage: window.localStorage,
+  });
+  const originalFetch = globalThis.fetch,
+    requests = [];
+  globalThis.fetch = async (url, init) => {
+    assert.equal(url, "https://sequence-lab-liart.vercel.app/api/tutor");
+    requests.push({ url, init });
+    return Response.json(
+      init?.method === "POST"
+        ? {
+            reply: "a₁₂ = 47；S₁₂ = 300。<img src=x onerror=alert(1)>",
+            source: "llm",
+          }
+        : { ready: true },
+    );
+  };
+  try {
+    await import("../docs/app.js?deployed-api-test");
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    assert.match(
+      document.querySelector("#connection-status").textContent,
+      /已連接後端/,
+    );
+    document.querySelector("#chat-input").value = "解釋求和";
+    document
+      .querySelector("#chat-form")
+      .dispatchEvent(
+        new window.Event("submit", { bubbles: true, cancelable: true }),
+      );
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    assert.equal(requests.length, 2);
+    const body = JSON.parse(requests[1].init.body);
+    assert.equal(body.message, "解釋求和");
+    assert.deepEqual(body.config, { type: "arithmetic", a: 3, d: 4, n: 12 });
+    assert.ok(!Object.keys(body).some((key) => /key|token/i.test(key)));
+    assert.match(document.querySelector("#chat-log").textContent, /a₁₂ = 47/);
+    assert.equal(document.querySelector("#chat-log img"), null);
+    assert.equal(document.querySelector("#send-chat").disabled, false);
+  } finally {
+    globalThis.fetch = originalFetch;
+    await window.happyDOM.abort();
+  }
 });

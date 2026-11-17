@@ -31,7 +31,12 @@ let config = { type: "arithmetic", a: 3, d: 4, n: 12 },
   timer = null,
   playing = 0,
   currentView = "",
-  backend = store.get("sequence-backend", ""),
+  backend = store.get("sequence-offline", false)
+    ? ""
+    : store.get("sequence-backend", "") ||
+      (location.hostname.endsWith("github.io")
+        ? "https://sequence-lab-liart.vercel.app/api/tutor"
+        : `${location.origin}/api/tutor`),
   aiReady = false,
   busy = false;
 const names = {
@@ -679,6 +684,7 @@ $("#ai-settings").addEventListener("submit", async (e) => {
   try {
     backend = validateBackend($("#backend-url").value.trim());
     store.set("sequence-backend", backend);
+    store.set("sequence-offline", !backend);
     $("#ai-dialog").close();
     await checkBackend();
   } catch (e) {
@@ -689,6 +695,7 @@ $("#disconnect-ai").addEventListener("click", () => {
   backend = "";
   aiReady = false;
   store.set("sequence-backend", "");
+  store.set("sequence-offline", true);
   $("#ai-dialog").close();
   connectionText();
   toast("已切換本機導學");
@@ -763,9 +770,6 @@ detect();
 selectScenario(0);
 newQuestion();
 navigate();
-// Same-origin deployment automatically detects its server. GitHub Pages does not host /api.
-if (!backend && ["localhost", "127.0.0.1"].includes(location.hostname))
-  backend = `${location.origin}/api/tutor`;
-if (!backend && !location.hostname.endsWith("github.io"))
-  backend = `${location.origin}/api/tutor`;
+// GitHub Pages connects to the public Vercel API; other hosts use the same origin.
+// An explicit offline choice remains offline after reload.
 checkBackend();

@@ -1,0 +1,605 @@
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="從每一項，發現規律。探索等差、等比與遞迴數列，用互動圖像、生活實驗及 AI 導師學懂數列。"
+    />
+    <meta name="theme-color" content="#183c36" />
+    <title>數列研究所 Sequence Lab</title>
+    <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <a class="skip" href="#main">跳至主要內容</a>
+    <aside class="sidebar">
+      <a class="brand" href="#explore"
+        ><span class="brand-icon">∑</span
+        ><span>數列研究所<small>SEQUENCE LAB</small></span></a
+      >
+      <div class="course-label">YOUR MATH WORKSPACE</div>
+      <nav aria-label="主要導覽">
+        <a href="#explore" data-view="explore"
+          ><span>◈</span>探索實驗室<i>01</i></a
+        >
+        <a href="#detective" data-view="detective"
+          ><span>⌕</span>規律偵探<i>02</i></a
+        >
+        <a href="#applications" data-view="applications"
+          ><span>⌁</span>生活應用<i>03</i></a
+        >
+        <a href="#practice" data-view="practice"
+          ><span>◎</span>練習挑戰<i>04</i></a
+        >
+        <a href="#notes" data-view="notes"><span>▤</span>學習筆記<i>05</i></a>
+      </nav>
+      <div class="sidebar-bottom">
+        <div class="tutor-promo">
+          <span class="spark">✦</span
+          ><strong>不只知道答案，<br />更要理解為甚麼。</strong>
+          <p>帶著你的數列，問個好問題。</p>
+          <a href="#tutor">與導師一起探索 <span>↗</span></a>
+        </div>
+        <div class="sidebar-foot">
+          <span class="tiny-dot"></span> S5 數學 · 數列與級數
+        </div>
+      </div>
+    </aside>
+    <div class="workspace">
+      <header class="topbar">
+        <div>
+          <button
+            class="mobile-menu"
+            aria-label="開關導覽"
+            aria-expanded="false"
+          >
+            ☰</button
+          ><span class="breadcrumb"
+            >學習空間 <span>/</span> <b id="crumb">探索實驗室</b></span
+          >
+        </div>
+        <div class="top-actions">
+          <span class="local-badge"><span></span> 互動學習工具</span
+          ><button class="button small secondary" id="export-report">
+            匯出紀錄 <span>↗</span></button
+          ><a class="avatar" href="#notes" aria-label="學習筆記">S</a>
+        </div>
+      </header>
+      <main id="main" tabindex="-1">
+        <section id="view-explore" class="view">
+          <div class="hero">
+            <div>
+              <div class="eyebrow"><span></span> EXPLORE THE PATTERN</div>
+              <h1>每一項，<br />都有<span>跡可循。</span></h1>
+              <p>
+                改變一個數字，發現一種規律。<br />讓抽象的數列，變成看得見的數學。
+              </p>
+              <div class="hero-meta">
+                <span>01 — 觀察</span><span>02 — 猜想</span
+                ><span>03 — 驗證</span>
+              </div>
+            </div>
+            <div class="hero-art" aria-hidden="true">
+              <div class="art-top">
+                A LITTLE CHANGE. A NEW POSSIBILITY.<span>↗</span>
+              </div>
+              <svg viewBox="0 0 420 130">
+                <path
+                  d="M30 110H390 M30 75H390 M30 40H390"
+                  stroke="#d4e1d4"
+                  stroke-dasharray="3 6"
+                />
+                <path
+                  d="M40 108L125 92L210 70L295 42L380 10"
+                  fill="none"
+                  stroke="#598276"
+                  stroke-width="2"
+                />
+                <g fill="#183c36">
+                  <circle cx="40" cy="108" r="6" />
+                  <circle cx="125" cy="92" r="7" />
+                  <circle cx="210" cy="70" r="8" />
+                  <circle cx="295" cy="42" r="9" />
+                </g>
+                <circle cx="380" cy="10" r="10" fill="#e88a56" />
+              </svg>
+              <div class="art-sequence">
+                <span>3<small>a₁</small></span
+                ><i>+4</i><span>7<small>a₂</small></span
+                ><i>+4</i><span>11<small>a₃</small></span
+                ><i>+4</i><span>15<small>a₄</small></span
+                ><i>…</i>
+              </div>
+            </div>
+          </div>
+          <div class="section-heading">
+            <div>
+              <h2>你的數列實驗台 <span class="tag">LIVE</span></h2>
+              <p>調整參數，即時觀察每一項與前 n 項和。</p>
+            </div>
+            <button class="text-button" id="reset">↺ 重設參數</button>
+          </div>
+          <div class="lab-grid">
+            <section class="card controls">
+              <div class="card-top">
+                <h3>定義你的數列</h3>
+                <span class="muted">01 / INPUT</span>
+              </div>
+              <div class="segmented" id="types" aria-label="數列類型">
+                <button
+                  data-type="arithmetic"
+                  class="active"
+                  aria-pressed="true"
+                >
+                  等差</button
+                ><button data-type="geometric" aria-pressed="false">等比</button
+                ><button data-type="recurrence" aria-pressed="false">
+                  遞迴
+                </button>
+              </div>
+              <p id="type-description" class="control-description"></p>
+              <form id="parameters" novalidate>
+                <label class="field"
+                  >首項 <span>a₁</span
+                  ><input
+                    id="a"
+                    name="a"
+                    type="number"
+                    step="any"
+                    value="3"
+                    min="-1000000"
+                    max="1000000"
+                    required
+                /></label>
+                <div id="dynamic-fields"></div>
+                <div class="range-label">
+                  <label for="n">觀察項數 <span>n</span></label
+                  ><output id="n-output" for="n">12 項</output>
+                </div>
+                <input
+                  id="n"
+                  name="n"
+                  type="range"
+                  min="1"
+                  max="200"
+                  value="12"
+                />
+                <div class="range-ends">
+                  <span>1 項</span><span>200 項</span>
+                </div>
+                <label class="field compact"
+                  >精確設定項數<input
+                    id="n-number"
+                    type="number"
+                    min="1"
+                    max="200"
+                    step="1"
+                    value="12" /></label
+                ><button type="button" id="play" class="button primary full">
+                  ▷ 逐項播放
+                </button>
+              </form>
+              <p id="lab-error" class="error" role="alert"></p>
+              <div class="tip">
+                <span>↳</span>
+                <p id="experiment-tip"></p>
+              </div>
+            </section>
+            <section class="card chart-card">
+              <div class="card-top">
+                <div>
+                  <h3>把規律，畫出來</h3>
+                  <p class="muted" id="chart-subtitle"></p>
+                </div>
+                <div class="chart-toggle" aria-label="圖表數值">
+                  <button data-chart="terms" class="active" aria-pressed="true">
+                    每一項 aₙ</button
+                  ><button data-chart="sums" aria-pressed="false">
+                    累計 Sₙ
+                  </button>
+                </div>
+              </div>
+              <div class="chart-legend">
+                <span><i></i><b id="chart-series-name">等差數列</b></span
+                ><span id="point-detail">移到圓點查看數值</span>
+              </div>
+              <div id="chart" class="chart"></div>
+              <p class="chart-note">
+                橫軸：項數 n · 縱軸：數值 · 虛線輔助觀察；數列只在整數項有定義。
+              </p>
+              <div class="metrics">
+                <div>
+                  <span>第 <b id="metric-n">12</b> 項 <i>aₙ</i></span
+                  ><strong id="nth">47</strong>
+                </div>
+                <div>
+                  <span>前 n 項和 <i>Sₙ</i></span
+                  ><strong id="sum">300</strong>
+                </div>
+                <div>
+                  <span id="change-label">公差 d</span
+                  ><strong id="change">+4</strong>
+                </div>
+              </div>
+            </section>
+          </div>
+          <div class="below-grid">
+            <section class="card derivation">
+              <div class="card-top">
+                <h3><span class="number-label">02</span> 從觀察到公式</h3>
+                <span class="muted">THE WHY</span>
+              </div>
+              <div class="formula-row">
+                <div id="formula"></div>
+                <small id="sum-formula"></small>
+              </div>
+              <ol id="steps"></ol>
+              <div class="insight" id="insight"></div>
+            </section>
+            <section class="card terms-card">
+              <div class="card-top">
+                <h3><span class="number-label">03</span> 數據放大鏡</h3>
+                <button id="download-csv" class="text-button">CSV ↓</button>
+              </div>
+              <div class="table-scroll">
+                <table>
+                  <thead>
+                    <tr>
+                      <th scope="col">項數 n</th>
+                      <th scope="col">數值 aₙ</th>
+                      <th scope="col">累計 Sₙ</th>
+                    </tr>
+                  </thead>
+                  <tbody id="terms-table"></tbody>
+                </table>
+              </div>
+              <p class="muted table-note">顯示全部項目；畫面數值經四捨五入。</p>
+            </section>
+          </div>
+          <a href="#applications" class="next-strip"
+            ><span class="next-icon">⌁</span
+            ><span
+              ><strong>數列，不只在課本裡。</strong
+              ><small>從閱讀計劃到紙張對摺，把規律帶進日常。</small></span
+            ><span class="next-arrow">探索生活應用 ↗</span></a
+          >
+        </section>
+        <section id="view-detective" class="view" hidden>
+          <div class="page-intro">
+            <div class="eyebrow">02 / PATTERN DETECTIVE</div>
+            <h1>下一項，<span>你怎樣想？</span></h1>
+            <p>輸入觀察到的數列，從差分、倍數與遞迴關係尋找證據。</p>
+          </div>
+          <div class="detective-grid">
+            <section class="card padded">
+              <h2>把線索交給我們</h2>
+              <label for="detective-input" class="field"
+                >你的數列（4–30 項）</label
+              ><textarea
+                id="detective-input"
+                rows="4"
+                placeholder="例如：2, 5, 8, 11, 14"
+              >
+2, 5, 8, 11, 14</textarea
+              >
+              <div class="example-chips">
+                <button data-example="2, 5, 8, 11, 14">等差</button
+                ><button data-example="3, 6, 12, 24, 48">等比</button
+                ><button data-example="1, 4, 9, 16, 25">平方數</button
+                ><button data-example="1, 1, 2, 3, 5, 8">前兩項相加</button>
+              </div>
+              <button id="detect" class="button primary full">
+                ⌕ 分析規律
+              </button>
+              <p id="detective-error" class="error" role="alert"></p>
+              <div class="notice">
+                有限項不能唯一確定一個無限數列。這裡提供符合已知資料的候選規律，預測下一項需要先假設規律繼續成立。
+              </div>
+            </section>
+            <section class="card padded">
+              <h2>觀察 → 證據 → 猜想</h2>
+              <div id="detective-results" aria-live="polite"></div>
+            </section>
+          </div>
+        </section>
+        <section id="view-applications" class="view" hidden>
+          <div class="page-intro">
+            <div class="eyebrow">03 / MATH IN EVERYDAY LIFE</div>
+            <h1>讓數列，<span>走進日常。</span></h1>
+            <p>先建立模型，再比較結果。每一個情境都有可以改變的假設。</p>
+          </div>
+          <div id="scenario-grid" class="scenario-grid"></div>
+          <div class="card padded application-work">
+            <div>
+              <span class="tag">YOUR EXPERIMENT</span>
+              <h2 id="scenario-title"></h2>
+              <p id="scenario-story"></p>
+            </div>
+            <form id="scenario-form" class="scenario-form"></form>
+            <div id="scenario-result" aria-live="polite"></div>
+            <button id="open-scenario" class="button primary">
+              帶到實驗台深入探索 ↗
+            </button>
+          </div>
+          <div class="notice">
+            這些是簡化的課堂模型。現實中的增長、回彈與記憶不一定保持固定比率；模型的價值也在於看見假設的限制。
+          </div>
+        </section>
+        <section id="view-practice" class="view" hidden>
+          <div class="page-intro">
+            <div class="eyebrow">04 / A LITTLE CHALLENGE</div>
+            <h1>想明白，<span>再往前一項。</span></h1>
+            <p>
+              練習公式、求和及規律推理。答錯也能看到推導，完成後留下學習紀錄。
+            </p>
+          </div>
+          <div class="practice-layout">
+            <section class="card padded quiz-card">
+              <div class="card-top">
+                <span id="quiz-category" class="tag"></span
+                ><span id="quiz-counter" class="muted"></span>
+              </div>
+              <h2 id="quiz-question"></h2>
+              <p id="quiz-hint" class="quiz-hint" hidden></p>
+              <form id="quiz-form">
+                <label class="field" for="quiz-answer">你的答案（數字）</label
+                ><input
+                  id="quiz-answer"
+                  type="number"
+                  step="any"
+                  placeholder="寫下你的計算結果"
+                  required
+                />
+                <div class="quiz-actions">
+                  <button class="button primary" id="check-answer">
+                    檢查答案</button
+                  ><button
+                    type="button"
+                    class="button secondary"
+                    id="show-hint"
+                  >
+                    給我提示</button
+                  ><button
+                    type="button"
+                    class="button secondary"
+                    id="next-question"
+                    hidden
+                  >
+                    下一題 →
+                  </button>
+                </div>
+              </form>
+              <div id="quiz-feedback" role="status"></div>
+            </section>
+            <aside class="card padded progress-card">
+              <span class="eyebrow">YOUR PROGRESS</span>
+              <h2>每天前進一小步</h2>
+              <div class="score-ring">
+                <strong id="quiz-score">0</strong><span>首次答對題數</span>
+              </div>
+              <div class="progress-detail">
+                <span>已完成</span><b id="quiz-done">0 題</b>
+              </div>
+              <div class="progress-detail">
+                <span>首次正確率</span><b id="quiz-accuracy">—</b>
+              </div>
+              <p class="muted">
+                紀錄只儲存在這個瀏覽器，不會上傳。提示後答對仍計入；同題重試不會重複計分。
+              </p>
+              <button id="reset-progress" class="text-button">
+                重設本機學習紀錄
+              </button>
+            </aside>
+          </div>
+        </section>
+        <section id="view-notes" class="view" hidden>
+          <div class="page-intro">
+            <div class="eyebrow">05 / THE FIELD NOTES</div>
+            <h1>記下規律，<span>連起知識。</span></h1>
+            <p>公式是起點，理解每一個符號與適用條件才是關鍵。</p>
+          </div>
+          <div class="notes-grid">
+            <article class="card padded">
+              <span class="note-index">01</span>
+              <h2>等差數列</h2>
+              <p>相鄰兩項之差相同，稱為公差 d。</p>
+              <div class="note-formula">
+                aₙ = a₁ + (n − 1)d<br />Sₙ = n(a₁ + aₙ) / 2
+              </div>
+              <p>
+                把正序與倒序相加：每列有 n 組 a₁ + aₙ，所以 2Sₙ = n(a₁ +
+                aₙ)。留意第 n 項只有 n−1 次增加。
+              </p>
+              <button class="text-button" data-load-type="arithmetic">
+                親手驗證 ↗
+              </button>
+            </article>
+            <article class="card padded">
+              <span class="note-index">02</span>
+              <h2>等比數列</h2>
+              <p>從首項起重複乘以固定公比 r。</p>
+              <div class="note-formula">
+                aₙ = a₁rⁿ⁻¹<br />Sₙ = a₁(1 − rⁿ)/(1 − r)
+              </div>
+              <p>
+                上式限 r ≠ 1；r = 1 時，Sₙ = na₁。把 Sₙ 與 rSₙ
+                相減，可消去中間項。若 |r| &lt; 1，S∞ = a₁/(1−r)。
+              </p>
+              <button class="text-button" data-load-type="geometric">
+                親手驗證 ↗
+              </button>
+            </article>
+            <article class="card padded">
+              <span class="note-index">03</span>
+              <h2>遞迴與平衡點</h2>
+              <p>以前一項定義下一項：aₙ₊₁ = paₙ + q。</p>
+              <div class="note-formula">
+                L = q/(1 − p)　(p ≠ 1)<br />aₙ − L = (a₁ − L)pⁿ⁻¹
+              </div>
+              <p>
+                先解 L = pL + q，再觀察偏離平衡點的距離。|p| &lt; 1 時距離趨近
+                0；p = 1 時退化成等差數列。
+              </p>
+              <button class="text-button" data-load-type="recurrence">
+                親手驗證 ↗
+              </button>
+            </article>
+            <article class="card padded">
+              <span class="note-index">04</span>
+              <h2>數列 ≠ 級數</h2>
+              <p>數列是一列有序的數 a₁, a₂, …；級數則是把各項相加。</p>
+              <div class="note-formula">
+                Sₙ = a₁ + a₂ + ⋯ + aₙ<br />aₙ = Sₙ − Sₙ₋₁　(n ≥ 2)
+              </div>
+              <p>
+                例如 2, 4, 6 的第三項為 6，前三項和為 12。n = 1 時，a₁ =
+                S₁。有限項和與無窮級數也要分清。
+              </p>
+            </article>
+          </div>
+          <details class="card padded">
+            <summary>關於這個作品 · 計算方法與 AI 資安</summary>
+            <div class="about-content">
+              <p>
+                對應課程：中學等差、等比、級數及一階線性遞迴。數值由本機
+                JavaScript 演算法計算，以補償加總減少浮點誤差；最多 200
+                項，數值絕對值上限 10¹⁰⁰。顯示值約保留 11
+                位有效數字，極端消去或大量次方仍可能有浮點誤差。
+              </p>
+              <p>
+                規律辨識檢查固定差、固定倍數、二階差分及前兩項和，容許小幅相對浮點誤差。不把有限資料的候選規律當成唯一答案。
+              </p>
+              <p>
+                AI
+                只負責解釋、提問與學習建議，不能修改計算器。請求只在你點擊「詢問
+                AI」後送往所設定的後端；API key 只存在後端環境變數，由伺服器呼叫
+                OpenRouter。未接通時提供清楚標示的本機導學。
+              </p>
+              <p>
+                後端重新驗證及計算參數，固定導師角色，限制訊息長度、輸出量、來源與呼叫頻率。模型輸出視為不可信文字，不作
+                HTML 執行。公開部署仍應加上平台限流及費用上限。
+              </p>
+              <p>
+                本作品不收集姓名、電郵或帳號；練習進度與你選擇的後端網址保存在本機。AI
+                請求會包含提問與當前數列參數，請勿輸入個人資料。
+              </p>
+              <a
+                href="https://github.com/happyyharry1209-oss/sequence-lab"
+                target="_blank"
+                rel="noopener noreferrer"
+                >查看原始碼與部署說明 ↗</a
+              >
+            </div>
+          </details>
+        </section>
+        <section id="view-tutor" class="view" hidden>
+          <div class="page-intro">
+            <div class="eyebrow">06 / THINK WITH A TUTOR</div>
+            <h1>好問題，<span>讓理解多一層。</span></h1>
+            <p>讓導師陪你觀察、推理與檢查。計算交給演算法，理解留給你。</p>
+          </div>
+          <div class="tutor-grid">
+            <aside>
+              <section class="card padded">
+                <span class="tag">目前的實驗</span>
+                <h2 id="tutor-type"></h2>
+                <div id="tutor-context"></div>
+                <a href="#explore" class="text-button">回到實驗台調整 ↗</a>
+              </section>
+              <section class="card padded connection-card">
+                <h3>AI 連線</h3>
+                <p id="connection-status"></p>
+                <button id="configure-ai" class="button secondary full">
+                  設定後端網址
+                </button>
+                <p class="muted">
+                  這裡不輸入 API key。金鑰只設定在你部署的伺服器。
+                </p>
+              </section>
+            </aside>
+            <section class="card chat-card">
+              <div class="card-top">
+                <div class="chat-avatar">✦</div>
+                <div>
+                  <h3>數列學習導師</h3>
+                  <p id="tutor-mode" class="muted">本機導學 · 非大語言模型</p>
+                </div>
+              </div>
+              <div id="chat-log" class="chat-log" role="log" aria-live="polite">
+                <div class="chat-message assistant">
+                  先猜想，再驗證。選擇下方問題查看本機導學，或設定後端後向 AI
+                  提問。AI 可能出錯，請用實驗台核對。
+                </div>
+              </div>
+              <div class="prompt-chips">
+                <button data-prompt="why">為甚麼是 n − 1？</button
+                ><button data-prompt="sum">帶我理解求和</button
+                ><button data-prompt="challenge">給我一個思考題</button>
+              </div>
+              <form id="chat-form">
+                <label for="chat-input" class="sr-only">向 AI 提問</label
+                ><textarea
+                  id="chat-input"
+                  maxlength="1500"
+                  rows="2"
+                  placeholder="例如：公比為負數時，數列有甚麼特徵？"
+                ></textarea>
+                <div class="chat-bottom">
+                  <small>只在送出後傳送提問與當前數列參數。</small
+                  ><button id="send-chat" class="button primary" type="submit">
+                    詢問 AI ↗
+                  </button>
+                </div>
+              </form>
+            </section>
+          </div>
+        </section>
+        <footer>
+          <a href="#explore">∑ 數列研究所</a
+          ><span>以好奇心為首項，讓理解持續增長。</span
+          ><span>MADE FOR LEARNING · 2026</span>
+        </footer>
+      </main>
+    </div>
+    <dialog id="ai-dialog">
+      <form id="ai-settings">
+        <div class="card-top">
+          <h2>連接你的 AI 後端</h2>
+          <button
+            type="button"
+            id="close-dialog"
+            class="icon-button"
+            aria-label="關閉"
+          >
+            ×
+          </button>
+        </div>
+        <p>
+          將本專案部署到支援 Node.js 的伺服器或 Vercel，在伺服器設定
+          <code>OPENROUTER_API_KEY</code>，再填入 API 網址。
+        </p>
+        <label for="backend-url" class="field">後端 API 網址（HTTPS）</label
+        ><input
+          type="url"
+          id="backend-url"
+          placeholder="https://your-app.vercel.app/api/tutor"
+        />
+        <p class="muted">
+          GitHub Pages
+          僅提供靜態網頁，不能保存後端金鑰。網址儲存在本機；只連接你信任的伺服器，因為提問會傳給它。
+        </p>
+        <p id="settings-error" class="error" role="alert"></p>
+        <div class="dialog-actions">
+          <button type="button" id="disconnect-ai" class="button secondary">
+            使用本機導學</button
+          ><button class="button primary" type="submit">儲存並檢查</button>
+        </div>
+      </form>
+    </dialog>
+    <div id="toast" class="toast" role="status" hidden></div>
+    <noscript><p>此互動學習網站需要啟用 JavaScript。</p></noscript>
+    <script type="module" src="./app.js"></script>
+  </body>
+</html>
